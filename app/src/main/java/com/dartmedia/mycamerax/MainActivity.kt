@@ -10,6 +10,7 @@ import androidx.camera.video.Recorder
 import androidx.camera.video.Recording
 import androidx.camera.video.VideoCapture
 import android.Manifest
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import com.dartmedia.mycamerax.databinding.ActivityMainBinding
 import java.util.concurrent.ExecutorService
@@ -51,7 +52,9 @@ class MainActivity : AppCompatActivity() {
 
     private fun startCamera() {}
 
-    private fun requestPermissions() {}
+    private fun requestPermissions() {
+        activityResultLauncher.launch(REQUIRED_PERMISSIONS)
+    }
 
     private fun allPermissionsGranted() = REQUIRED_PERMISSIONS.all {
         ContextCompat.checkSelfPermission(
@@ -66,7 +69,13 @@ class MainActivity : AppCompatActivity() {
             // Handle permissions granted/rejected
             var permissionGranted = true
             permissions.entries.forEach {
-
+                if (it.key in REQUIRED_PERMISSIONS && it.value == false)
+                    permissionGranted = false
+            }
+            if (!permissionGranted) {
+                Toast.makeText(baseContext, "Permission denied", Toast.LENGTH_SHORT).show()
+            } else {
+                startCamera()
             }
         }
 
